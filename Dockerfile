@@ -4,15 +4,25 @@ WORKDIR /src
 RUN git clone https://github.com/etclabscore/open-etc-pool.git
 WORKDIR /src/open-etc-pool
 
-# Build
-RUN make || (echo "MAKE FAILED" && ls -la && exit 1)
+# Show what we're building
+RUN set -eux; ls -la; echo "---- Makefile (if exists) ----"; (ls -la Makefile && sed -n '1,200p' Makefile) || true
 
-# Find the built binary (path differs by repo/build)
+# Try make, but don't assume it produces a binary with a specific name
 RUN set -eux; \
-    find /src/open-etc-pool -maxdepth 5 -type f -name "open-etc-pool" -print; \
-    BIN="$(find /src/open-etc-pool -maxdepth 6 -type f -name 'open-etc-pool' | head -n 1)"; \
-    if [ -z "$BIN" ]; then echo "open-etc-pool binary not found after build"; find /src/open-etc-pool -maxdepth 6 -type f -print; exit 1; fi; \
-    cp "$BIN" /tmp/open-etc-pool
+    echo "---- running make ----"; \
+    make || true; \
+    echo "---- tree (top) ----"; \
+    find . -maxdepth 3 -type d -print; \
+    echo "---- files that look like binaries ----"; \
+    find . -maxdepth 6 -type f -perm -111 -print || true; \
+    echo "---- go build fallback ----"; \
+    if [ -f "go.mod" ]; then \
+      go build -v -o /tmp/open-etc-pool ./... || true; \
+      # If ./... fails (multiple mains), try common main locations:
+      go build -v -o /tmp/open-etc-pool . || true; \
+      go build -v -o /tmp/open-etc-pool ./cmd/... || true; \
+    fi; \
+    test -f /tmp/open-etc-pool
 
 FROM alpine:3.20
 RUN apk add --no-cache ca-certificates tzdata
