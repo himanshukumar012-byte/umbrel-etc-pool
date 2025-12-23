@@ -17,7 +17,8 @@ services:
     volumes:
       - ./:/repo:ro
     command: ["open-etc-pool", "/repo/config.json"]
-ENTRYPOINT ["open-etc-pool2"]
+ENTRYPOINT ["open-etc-pool"]
 CMD ["/repo/config.json"]
+
 
 
