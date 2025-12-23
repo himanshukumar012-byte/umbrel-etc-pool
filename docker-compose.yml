@@ -1,11 +1,18 @@
 version: "3.8"
 
 services:
-  miningcore:
-    image: coinfoundry/miningcore-docker:latest
-    container_name: etc-stratum
+  redis:
+    image: redis:7-alpine
     restart: unless-stopped
+
+  etc-pool:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - redis
     ports:
       - "3333:3333"
     volumes:
-      - ./config.json:/config.json:ro
+      - ./config.json:/app/config.json:ro
