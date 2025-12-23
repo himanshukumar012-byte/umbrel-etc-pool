@@ -1,0 +1,28 @@
+{
+  "logging": {
+    "level": "info",
+    "enableConsoleLog": true,
+    "enableConsoleColors": true
+  },
+
+  "banning": { "enabled": false },
+
+  "paymentProcessing": { "enabled": false },
+
+  "pools": [
+    {
+      "id": "etc",
+      "enabled": true,
+      "coin": "etc",
+      "address": "0x0670BA237Aa51C12aCEF42531c4296c5871d84F5",
+
+      "daemons": [
+        { "host": "192.168.0.72", "port": 8545, "user": "", "password": "" }
+      ],
+
+      "ports": {
+        "3333": { "listenAddress": "0.0.0.0", "difficulty": 4000000000 }
+      }
+    }
+  ]
+}
