@@ -15,5 +15,5 @@ services:
     ports:
       - "3333:3333"
     volumes:
-      - ./:/app:ro
-    command: ["open-etc-pool", "/app/config.json"]
+      - ./:/repo:ro
+    command: ["open-etc-pool", "/repo/config.json"]
